@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.testyle.dao.IUserDao">
+
+    <select id="selectUser" resultType="User" parameterType="long">
+        SELECT * FROM user WHERE userID = #{userID}
+    </select>
+
+    <select id="checkUser" resultType="long" parameterType="User">
+        select IFNULL(max(userID),0) as userID FROM user
+        <where>
+            <if test="userName!=null">
+                and userName=#{userName}
+            </if>
+            <if test="userPassword!=null">
+                and userPassword=#{userPassword}
+            </if>
+        </where>
+    </select>
+    <insert id="addUser" parameterType="User" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="userID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into user (userName,userPassword,userRealName) values (#{userName},
+        #{userPassword},#{userRealName})
+    </insert>
+
+    <delete id="deleteUser" parameterType="long" statementType="PREPARED">
+        delete from user
+        <where>
+            <if test="userID!=-1">
+                and userID=#{userID}
+            </if>
+        </where>
+    </delete>
+</mapper>

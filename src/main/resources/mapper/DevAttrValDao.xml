@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IDevAttrValDao">
+    <resultMap id="listDevAttrVal" type="DevAttrVal">
+        <id column="ID" property="ID"></id>
+        <result property="attrID" column="attrID"></result>
+        <result property="devID" column="devID"></result>
+        <result property="arrtVal" column="arrtVal"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listDevAttrVal" parameterType="DevAttrVal">
+        select * from DevAttrVal
+        <where>
+            <if test="ID!=-1">
+                and ID=#{ID}
+            </if>
+            <if test="devID!=-1">
+                and devID=#{devID}
+            </if>
+            <if test="attrID!=-1">
+                and attrID=#{attrID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="DevAttrVal" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="ID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into DevAttrVal (attrID,devID,arrtVal,addtime) values (#{attrID},
+        #{devID},#{arrtVal},#{addtime})
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from DevAttrVal where ID=#{ID}
+    </delete>
+
+    <update id="update" parameterType="TypeAttr">
+        update DevAttrVal
+        set attrID=#{attrID},devID=#{devID} arrtVal=#{arrtVal},addtime=#{addtime} where ID=#{ID}
+    </update>
+
+</mapper>

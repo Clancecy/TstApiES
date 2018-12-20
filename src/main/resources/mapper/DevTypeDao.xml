@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IDevTypeDao">
+    <resultMap id="listDevType" type="DevType">
+        <id column="typeID" property="typeID"></id>
+        <result property="typeName" column="typeName"></result>
+        <result property="pTypeID" column="pTypeID"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listDevType" parameterType="DevType">
+        select * from devType
+        <where>
+            <if test="typeID!=-1">
+                and typeID=#{typeID}
+            </if>
+            <if test="pTypeID!=-1">
+                and pTypeID=#{pTypeID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="DevType" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="typeID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into DevType (typeName,pTypeID,addtime) values (#{typeName},
+        #{pTypeID},#{addtime} )
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from devType where typeID=#{typeID}
+    </delete>
+
+    <update id="update" parameterType="TypeAttr">
+        update devType
+        set typeName=#{typeName},pTypeID=#{pTypeID} ,addtime=#{addtime} where typeID=#{typeID}
+    </update>
+
+</mapper>

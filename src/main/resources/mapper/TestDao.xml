@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.ITestDao">
+    <resultMap id="listTest" type="Test">
+        <id column="testID" property="testID"></id>
+        <result property="testName" column="testName"></result>
+        <result property="testCode" column="testCode"></result>
+        <result property="url" column="url"></result>
+        <result property="planID" column="PlanID"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listTest" parameterType="Test">
+        select * from test
+        <where>
+            <if test="testID!=-1">
+                and testID=#{testID}
+            </if>
+            <if test="testName!=null">
+                and testName=#{testName}
+            </if>
+            <if test="planID!=-1">
+                and planID=#{planID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="Test" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="testID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into test (testName,planID,url,testCode) values (#{testName},
+        #{planID},#{url},#{testCode} )
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from test where testID=#{testID}
+    </delete>
+
+    <update id="update" parameterType="Test">
+        update test
+        set testName=#{testName},planID=#{planID} ,url=#{url},testCode=#{testCode} where testID=#{testID}
+    </update>
+
+</mapper>

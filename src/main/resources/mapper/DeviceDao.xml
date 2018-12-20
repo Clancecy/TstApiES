@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IDeviceDao">
+    <resultMap id="listDevice" type="Device">
+        <id column="devID" property="devID"></id>
+        <result property="devName" column="devName"></result>
+        <result property="devTypeID" column="devTypeID"></result>
+        <result property="staID" column="staID"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listDevice" parameterType="Device">
+        select * from device
+        <where>
+            <if test="devID!=-1">
+                and devID=#{devID}
+            </if>
+            <if test="devTypeID!=-1">
+                and devTypeID=#{devTypeID}
+            </if>
+            <if test="staID!=-1">
+                and staID=#{staID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="Device" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="devID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into Device (devName,devTypeID,staID,addtime) values (#{devName},
+        #{devTypeID},#{staID},#{addtime})
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from Device where devID=#{devID}
+    </delete>
+
+    <update id="update" parameterType="TypeAttr">
+        update Device
+        set devName=#{devName},devTypeID=#{devTypeID} ,addtime=#{addtime} where devID=#{devID}
+    </update>
+
+</mapper>

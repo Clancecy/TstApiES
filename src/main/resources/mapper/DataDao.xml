@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IDataDao">
+    <resultMap id="listData" type="Data">
+        <id column="dataID" property="dataID"></id>
+        <result property="testID" column="testID"></result>
+        <result property="proID" column="proID"></result>
+        <result property="dataVal" column="dataVal"></result>
+        <result property="recordID" column="recordID"></result>
+        <result property="itemID" column="itemID"></result>
+        <result property="testOrder" column="testOrder"></result>
+    </resultMap>
+
+    <select id="getData" resultType="Data" parameterType="long">
+        select *from data where dataID=#{dataID}
+    </select>
+    <select id="selOne" resultType="long" parameterType="Data">
+        select IFNULL(max(dataID),0) as dataID from data
+        <where>
+            <if test="testID!=-1">
+                and testID=#{testID}
+            </if>
+            <if test="recordID!=-1">
+                and recordID=#{recordID}
+            </if>
+            <if test="proID!=-1">
+                and proID=#{proID}
+            </if>
+            <if test="testOrder!=-1">
+                and testOrder=#{testOrder}
+            </if>
+            <if test="itemID!=-1">
+                and itemID=#{itemID}
+            </if>
+        </where>
+
+    </select>
+    <select id="select" resultMap="listData" parameterType="Data">
+        select * from data
+        <where>
+            <if test="dataID!=-1">
+                and dataID=#{dataID}
+            </if>
+            <if test="testID!=-1">
+                and testID=#{testID}
+            </if>
+            <if test="recordID!=-1">
+                and recordID=#{recordID}
+            </if>
+            <if test="proID!=-1">
+                and proID=#{proID}
+            </if>
+            <if test="testOrder!=-1">
+                and testOrder=#{testOrder}
+            </if>
+            <if test="itemID!=-1">
+                and itemID=#{itemID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="Data" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="dataID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into data (testID,proID,dataVal,recordID,testOrder,itemID,addtime) values (#{testID},
+        #{proID},#{dataVal},#{recordID},#{testOrder},#{itemID},#{addtime})
+    </insert>
+    <insert id="insertList"  useGeneratedKeys="true" parameterType="java.util.List">
+        <selectKey resultType="long" keyProperty="dataID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into data (testID,proID,dataVal,recordID,testOrder,itemID,addtime) values
+        <!--data就是List里每一项的对象名，要用","分割每一条数据，最后要";"结尾-->
+        <foreach collection="list" item="Data" index="index" separator="," close=";">
+            ( #{Data.testID},#{Data.proID},#{Data.dataVal},#{Data.recordID},#{Data.testOrder},#{Data.itemID},#{Data.addtime})
+        </foreach>
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from data where dataID=#{dataID}
+    </delete>
+
+    <update id="update" parameterType="Data">
+        update data
+        set testID=#{testID},proID=#{proID} ,dataVal=#{dataVal},recordID=#{recordID},testOrder=#{testOrder},itemID=#{itemID},addtime=#{addtime} where dataID=#{dataID}
+    </update>
+
+    <update id="updateList" parameterType="java.util.List">
+        update data set
+        testID =
+        <foreach collection="list" item="Data" index="index"
+                 separator=" " open="case DataID" close="end">
+            when #{Data.dataID} then
+            #{Data.testID}
+        </foreach>
+        ,proID =
+        <foreach collection="list" item="Data" index="index"
+                 separator=" " open="case DataID" close="end">
+            when #{Data.dataID} then
+            #{Data.proID}
+        </foreach>
+        ,recordID =
+        <foreach collection="list" item="Data" index="index"
+                 separator=" " open="case DataID" close="end">
+            when #{Data.dataID} then
+            #{Data.recordID}
+        </foreach>
+        ,testOrder =
+        <foreach collection="list" item="Data" index="index"
+                 separator=" " open="case DataID" close="end">
+            when #{Data.dataID} then
+            #{Data.testOrder}
+        </foreach>
+        ,itemID =
+        <foreach collection="list" item="Data" index="index"
+                 separator=" " open="case DataID" close="end">
+            when #{Data.dataID} then
+            #{Data.itemID}
+        </foreach>
+        ,addtime =
+        <foreach collection="list" item="Data" index="index"
+                 separator=" " open="case DataID" close="end">
+            when #{Data.dataID} then
+            #{Data.addtime}
+        </foreach>
+        ,dataVal =
+        <foreach collection="list" item="Data" index="index"
+                 separator=" " open="case DataID" close="end">
+            when #{Data.dataID} then
+            #{Data.dataVal}
+        </foreach>
+    </update>
+
+</mapper>

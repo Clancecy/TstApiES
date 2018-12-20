@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IItemDao">
+    <resultMap id="listItem" type="Item">
+        <id column="itemID" property="itemID"></id>
+        <result property="itemName" column="itemName"></result>
+        <result property="itemType" column="itemType"></result>
+        <result property="itemVal" column="itemVal"></result>
+        <result property="recordID" column="recordID"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listItem" parameterType="Item">
+        select * from item
+        <where>
+            <if test="itemID!=-1">
+                and itemID=#{itemID}
+            </if>
+            <if test="itemName!=null">
+                and itemName=#{itemName}
+            </if>
+            <if test="recordID!=-1">
+                and recordID=#{recordID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="Item" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="itemID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into item (itemName,itemType,itemVal,recordID) values (#{itemName},
+        #{itemType},#{itemVal},#{recordID})
+    </insert>
+    <insert id="insertList"  useGeneratedKeys="true" parameterType="java.util.List">
+        <selectKey resultType="long" keyProperty="itemID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into item (itemName,itemType,itemVal,recordID) values
+        <!--item就是List里每一项的对象名，要用","分割每一条数据，最后要";"结尾-->
+        <foreach collection="list" item="Item" index="index" separator="," close=";">
+            ( #{Item.itemName},#{Item.itemType},#{Item.itemVal},#{Item.recordID})
+        </foreach>
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from item where itemID=#{itemID}
+    </delete>
+
+    <update id="update" parameterType="Item">
+        update item
+        set itemName=#{itemName},itemType=#{itemType} ,itemVal=#{itemVal},recordID=#{recordID} where itemID=#{itemID}
+    </update>
+
+</mapper>

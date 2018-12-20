@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.ITypeAttrDao">
+    <resultMap id="listTypeAttr" type="TypeAttr">
+        <id column="attrID" property="attrID"></id>
+        <result property="attrName" column="attrName"></result>
+        <result property="typeID" column="typeID"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listTypeAttr" parameterType="TypeAttr">
+        select * from typeAttr
+        <where>
+            <if test="attrID!=-1">
+                and attrID=#{attrID}
+            </if>
+            <if test="typeID!=-1">
+                and typeID=#{typeID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="TypeAttr" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="attrID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into typeAttr (attrName,typeID,addtime) values (#{attrName},
+        #{typeID},#{addtime})
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from typeAttr where attrID=#{attrID}
+    </delete>
+
+    <update id="update" parameterType="TypeAttr">
+        update typeAttr
+        set attrName=#{attrName},typeID=#{typeID} ,addtime=#{addtime} where attrID=#{attrID}
+    </update>
+
+</mapper>

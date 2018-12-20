@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IStationDao">
+    <resultMap id="listStation" type="Station">
+        <id property="staID" column="staID"></id>
+        <result property="staName" column="staName"></result>
+        <result property="pStaID" column="pStaID"></result>
+        <result property="depth" column="depth"></result>
+    </resultMap>
+
+    <select id="selectAll" resultMap="listStation">
+        select * from Station
+    </select>
+
+    <select id="selectChildren" resultMap="listStation" parameterType="long">
+        select * from station where pStaID=#{pStaID};
+    </select>
+
+    <select id="selectStation" resultType="Station" parameterType="long">
+        select * from station where staID=#{staID}
+    </select>
+
+    <insert id="insertStation" parameterType="Station" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="staID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into station (staName,pStaID,addtime) values (#{staName},
+        #{pStaID},#{addtime})
+    </insert>
+
+    <delete id="deleteStation" parameterType="long">
+        delete from Station where staID=#{staID}
+    </delete>
+
+    <update id="updateStation" parameterType="Station">
+        update Station
+        set staName=#{staName},longitude=#{longitude},latitude=#{latitude},addtime=#{addtime} where staID=#{staID}
+    </update>
+</mapper>

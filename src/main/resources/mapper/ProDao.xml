@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IProDao">
+    <resultMap id="listPro" type="Project">
+        <id column="proID" property="proID"></id>
+        <result property="proName" column="proName"></result>
+        <result property="url" column="url"></result>
+        <result property="devTypeID" column="devTypeID"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listPro" parameterType="Project">
+        select * from Pro
+        <where>
+            <if test="proID!=-1">
+                and proID=#{proID}
+            </if>
+            <if test="proName!=null">
+                and proName=#{proName}
+            </if>
+            <if test="devTypeID!=-1">
+                and devTypeID=#{devTypeID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="Project" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="proID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into Pro (proName,devTypeID,url) values (#{proName},
+        #{devTypeID},#{url} )
+    </insert>
+    <delete id="delete" parameterType="long">
+        delete from Pro where proID=#{proID}
+    </delete>
+
+    <update id="update" parameterType="Project">
+        update Pro
+        set proName=#{proName},devTypeID=#{devTypeID} ,url=#{url} where proID=#{proID}
+    </update>
+
+</mapper>

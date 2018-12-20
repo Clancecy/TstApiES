@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.testyle.dao.IRecordDao">
+    <resultMap id="listRec" type="Record">
+        <id column="recordID" property="recordID"></id>
+        <result property="recordName" column="recordName"></result>
+        <result property="pRecID" column="pRecID"></result>
+        <result property="proID" column="proID"></result>
+    </resultMap>
+
+    <select id="select" resultMap="listRec" parameterType="Record">
+        select * from record
+        <where>
+            <if test="recordID!=-1">
+                and recordID=#{recordID}
+            </if>
+            <if test="recordName!=null">
+                and recordName=#{recordName}
+            </if>
+            <if test="pRecID!=-1">
+                and pRecID=#{pRecID}
+            </if>
+            <if test="proID!=-1">
+                and proID=#{proID}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="Record" >
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="recordID">
+            SELECT @@IDENTITY
+        </selectKey>
+        INSERT into record (recordName,proID,pRecID) values (#{recordName},
+        #{proID},#{pRecID})
+    </insert>
+
+    <delete id="delete" parameterType="long">
+        delete from record where recordID=#{recordID}
+    </delete>
+
+    <update id="update" parameterType="Record">
+        update record
+        set recordName=#{recordName},proID=#{proID},pRecID=#{pRecID} where recordID=#{recordID}
+    </update>
+
+</mapper>
