@@ -1,5 +1,6 @@
 package com.testyle.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class Project {
@@ -7,6 +8,8 @@ public class Project {
     String proName;
     String Url;
     long devTypeID=-1;
+    int proType=-1;
+    Date addtime=new Date();
     List<Record> records;
 
     public List<Record> getRecords() {
@@ -47,5 +50,21 @@ public class Project {
 
     public void setDevTypeID(long devTypeID) {
         this.devTypeID = devTypeID;
+    }
+
+    public int getProType() {
+        return proType;
+    }
+
+    public void setProType(int proType) {
+        this.proType = proType;
+    }
+
+    public Date getAddtime() {
+        return addtime;
+    }
+
+    public void setAddtime(Date addtime) {
+        this.addtime = addtime;
     }
 }

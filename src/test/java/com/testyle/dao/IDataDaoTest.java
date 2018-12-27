@@ -195,7 +195,7 @@ public class IDataDaoTest {
         }
         try {
             File pdfFile = new File("E:/reportPDF/test1.pdf");// 输出路径
-            Workbook wb = new Workbook("E:/reportPDF/报告名字.xlsx");// 原始excel路径
+            Workbook wb = new Workbook("E:/reportPDF/油浸式模板.xlsx");// 原始excel路径
             FileOutputStream fileOS = new FileOutputStream(pdfFile);
             wb.save(fileOS, SaveFormat.PDF);
             fileOS.close();

@@ -10,7 +10,6 @@ import com.testyle.model.Record;
 import com.testyle.service.IItemService;
 import com.testyle.service.IProService;
 import com.testyle.service.IRecordService;
-import javafx.beans.binding.ObjectExpression;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Controller;
@@ -60,19 +59,35 @@ public class ProController {
                     root,
                     file.getOriginalFilename()));
         }
-        Project project = new Project();
         String url = root + file.getOriginalFilename();
         long devTypeID = Long.parseLong(request.getParameter("devTypeID"));
-        project.setUrl(url);
         String temp=file.getOriginalFilename();
-        project.setProName(temp.split("\\.")[0]);
+        String fileName=temp.split("\\.")[0];
+        Project project = new Project();
+        project.setUrl(url);
+        project.setProName(fileName);
         project.setDevTypeID(devTypeID);
+        project.setProType(0);
         long ID = proService.insert(project);
         if (ID > 0) {
-            readExcel(url,project.getProID());
+            readExcel(url,project.getProID(),1);
+            Project projectTemp = new Project();
+            projectTemp.setDevTypeID(devTypeID);
+            projectTemp.setProType(1);
+            List<Project> list=proService.select(projectTemp);
+            if(readDefaultNum(url)==1&&list.size()==0) {
+                ID = proService.insert(project);
+                if (ID > 0) {
+                    readExcel(url, project.getProID(), 3);
+                    resContent.setCode(101);
+                    resContent.setMessage("上传成功");
+                }else {
+                    resContent.setCode(102);
+                    resContent.setMessage("上传失败");
+                }
+            }
             resContent.setCode(101);
             resContent.setMessage("上传成功");
-            resContent.setData(project.getProID());
         } else {
             resContent.setCode(102);
             resContent.setMessage("上传失败");
@@ -121,7 +136,7 @@ public class ProController {
             Project project=new Project();
             project.setProID(proID);
             List <Project> projectList= proService.select(project);
-            if(projectList.size()==0){
+            if(projectList==null||projectList.size()==0){
                 resContent.setCode(104);
                 resContent.setMessage("没有该项目");
             }else {
@@ -150,6 +165,39 @@ public class ProController {
                         resContent.setCode(102);
                         resContent.setMessage("获取失败");
                     }
+                }
+            }
+        }
+        response.getWriter().write(JSON.toJSONString(resContent));
+        response.getWriter().close();
+    }
+
+    @RequestMapping("/default")
+    public void getDefault(Project project,HttpServletResponse response)throws IOException{
+        response.setCharacterEncoding(charact);
+        ResContent resContent=new ResContent();
+        if(project.getDevTypeID()==-1){
+            resContent.setCode(103);
+            resContent.setMessage("参数错误");
+        }else {
+            project.setProType(1);
+            List<Project> projectList=proService.select(project);
+            if(projectList.size()==0){
+                resContent.setCode(104);
+                resContent.setMessage("没有出厂值");
+            }else {
+                project =projectList.get(0);
+                Record record = new Record();
+                record.setProID(project.getProID());
+                List<Record> records = recordService.select(record);
+                List<Record> objects = dealRecords(records);
+                if(objects.size()>0){
+                    resContent.setCode(101);
+                    resContent.setMessage("获取成功");
+                    resContent.setData(objects);
+                }else {
+                    resContent.setCode(102);
+                    resContent.setMessage("获取失败");
                 }
             }
         }
@@ -194,7 +242,23 @@ public class ProController {
             FileInputStream fis = new FileInputStream(testUrl);
             Workbook workbook = WorkbookFactory.create(fis);
             Row row = workbook.getSheetAt(2).getRow(0);
-            Cell cell = row.getCell(3);
+            Cell cell = row.getCell(1);
+            String val=excelUtils.getCellValue(workbook,cell).toString();
+            num= (int)Double.parseDouble(val);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return num;
+    }
+
+    private int readDefaultNum(String testUrl){
+        int num=0;
+        ExcelUtils excelUtils=new ExcelUtils();
+        try {
+            FileInputStream fis = new FileInputStream(testUrl);
+            Workbook workbook = WorkbookFactory.create(fis);
+            Row row = workbook.getSheetAt(2).getRow(1);
+            Cell cell = row.getCell(1);
             String val=excelUtils.getCellValue(workbook,cell).toString();
             num= (int)Double.parseDouble(val);
         }catch (Exception e){
@@ -243,11 +307,11 @@ public class ProController {
         List<Item> itemList=itemService.select(item);
         return itemList;
     }
-    private void readExcel(String fname, long proID) {
+    private void readExcel(String fname, long proID,int sheetAt) {
         try {
             FileInputStream fis = new FileInputStream(fname);
             Workbook workbook = WorkbookFactory.create(fis);
-            Sheet sheet = workbook.getSheetAt(1);
+            Sheet sheet = workbook.getSheetAt(sheetAt);
             addFirstRecord(sheet,workbook, proID, 0);
             workbook.close();
             fis.close();

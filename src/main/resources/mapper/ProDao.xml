@@ -6,6 +6,7 @@
         <result property="proName" column="proName"></result>
         <result property="url" column="url"></result>
         <result property="devTypeID" column="devTypeID"></result>
+        <result property="addtime" column="addtime"></result>
     </resultMap>
 
     <select id="select" resultMap="listPro" parameterType="Project">
@@ -20,14 +21,17 @@
             <if test="devTypeID!=-1">
                 and devTypeID=#{devTypeID}
             </if>
+            <if test="proType!=-1">
+                and proType=#{proType}
+            </if>
         </where>
     </select>
     <insert id="insert" parameterType="Project" >
         <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="proID">
             SELECT @@IDENTITY
         </selectKey>
-        INSERT into Pro (proName,devTypeID,url) values (#{proName},
-        #{devTypeID},#{url} )
+        INSERT into Pro (proName,devTypeID,url,proType,addtime) values (#{proName},
+        #{devTypeID},#{url},#{proType},#{addtime} )
     </insert>
     <delete id="delete" parameterType="long">
         delete from Pro where proID=#{proID}
@@ -35,7 +39,7 @@
 
     <update id="update" parameterType="Project">
         update Pro
-        set proName=#{proName},devTypeID=#{devTypeID} ,url=#{url} where proID=#{proID}
+        set proName=#{proName},devTypeID=#{devTypeID} ,url=#{url},proType=#{proType},addtime=#{addtime} where proID=#{proID}
     </update>
 
 </mapper>
