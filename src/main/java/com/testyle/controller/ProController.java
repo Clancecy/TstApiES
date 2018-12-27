@@ -125,10 +125,10 @@ public class ProController {
         response.setCharacterEncoding(charact);
         ResContent resContent = new ResContent();
         long proID = Long.parseLong(request.getParameter("proID"));
-        long reportID = Long.parseLong(request.getParameter("reportID"));
+        long testID = Long.parseLong(request.getParameter("testID"));
         long taskID = Long.parseLong(request.getParameter("taskID"));
         if(request.getParameter("proID")==null
-        ||request.getParameter("reportID")==null
+        ||request.getParameter("testID")==null
         ||request.getParameter("taskID")==null){
             resContent.setCode(103);
             resContent.setMessage("参数错误");
@@ -143,7 +143,7 @@ public class ProController {
                 project = projectList.get(0);
                 String url = project.getUrl();
                 int num = readRecordNum(url);
-                String code="rep"+reportID+"task"+taskID+"pro"+proID;
+                String code="test"+testID+"task"+taskID+"pro"+proID;
                 Record record = new Record();
                 record.setProID(proID);
                 List<Record> records = recordService.select(record);
