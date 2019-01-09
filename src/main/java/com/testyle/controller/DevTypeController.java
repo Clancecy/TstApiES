@@ -33,8 +33,8 @@ public class DevTypeController {
         for (DevType x : type) {
             Map<String,Object> mapArr = new LinkedHashMap<String, Object>();
             if(x.getpTypeID()==0){
-                mapArr.put("id", x.getTypeID());
-                mapArr.put("label", x.getTypeName());
+                mapArr.put("typeID", x.getTypeID());
+                mapArr.put("typeName", x.getTypeName());
                 mapArr.put("level", x.getDepth());
                 mapArr.put("pid", x.getpTypeID());
                 if(devTypeChild(x.getTypeID()).size()>0)
@@ -42,6 +42,7 @@ public class DevTypeController {
                 list.add(mapArr);
             }
         }
+
         return list;
     }
 
@@ -51,8 +52,8 @@ public class DevTypeController {
         for(DevType a:typeCommon){
             Map<String,Object> childArray = new LinkedHashMap<String, Object>();
             if(a.getpTypeID() == id){
-                childArray.put("label", a.getTypeName());
-                childArray.put("id", a.getTypeID());
+                childArray.put("typeName", a.getTypeName());
+                childArray.put("typeID", a.getTypeID());
                 childArray.put("level", a.getDepth());
                 childArray.put("pid", a.getpTypeID());
                 if(devTypeChild(a.getTypeID()).size()>0)
@@ -97,6 +98,24 @@ public class DevTypeController {
         int count =devTypeService.delete(typeID);
         ResContent resContent=new ResContent();
         Utils.dealForDel(count, resContent);
+        response.getWriter().write(JSON.toJSONString(resContent));
+        response.getWriter().close();
+    }
+
+    @RequestMapping("/show")
+    public void showDevType(HttpServletRequest request,HttpServletResponse response)throws IOException{
+        response.setCharacterEncoding(charact);
+        ResContent resContent=new ResContent();
+        try {
+            long typeID = Long.parseLong(request.getParameter("typeID"));
+            DevType devType=devTypeService.select(typeID);
+            resContent.setCode(101);
+            resContent.setMessage("获取成功");
+            resContent.setData(devType);
+        }catch (NumberFormatException ne){
+            resContent.setCode(103);
+            resContent.setMessage("参数错误");
+        }
         response.getWriter().write(JSON.toJSONString(resContent));
         response.getWriter().close();
     }

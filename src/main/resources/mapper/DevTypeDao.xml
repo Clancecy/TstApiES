@@ -7,6 +7,10 @@
         <result property="pTypeID" column="pTypeID"></result>
     </resultMap>
 
+    <select id="selectByID" resultType="DevType" parameterType="Long">
+        select * from devType where typeID=#{typeID}
+
+    </select>
     <select id="select" resultMap="listDevType" parameterType="DevType">
         select * from devType
         <where>

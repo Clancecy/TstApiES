@@ -102,10 +102,11 @@ public class DataController {
         }else {
             try {
                 List<Data> dataList = (List<Data>) JSON.parseArray(data.getDataVal(), Data.class);
-                List<Project> projects = toProjects(dataList);
+                Project project= toProject(dataList);
+              //  List<Project> projects = toProjects(dataList);
                 resContent.setCode(101);
                 resContent.setMessage("获取成功");
-                resContent.setData(projects);
+                resContent.setData(project);
             } catch (JSONException jsone) {
                 jsone.printStackTrace();
                 resContent.setCode(104);
@@ -119,6 +120,15 @@ public class DataController {
         System.out.println(JSON.toJSONString(resContent));
         response.getWriter().write(JSON.toJSONString(resContent));
         response.getWriter().close();
+    }
+
+    private Project toProject(List<Data> dataList) {
+        long proID=dataList.get(0).getProID();
+        Project project = new Project();
+        project.setProID(proID);
+        project=proService.select(project).get(0);
+        project.setRecords(getDbRecords(dataList, proID));
+        return project;
     }
 
     private List<Project> toProjects(List<Data> dataList) {

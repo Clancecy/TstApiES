@@ -19,6 +19,7 @@
     </form>
     <h1>下载文件</h1>
     <a href="/project/down" download="直流电阻模板.xlsx">点击下载</a>
+    <%--<a href="/download?直流电阻模板.xlsx">下载</a>--%>
 </div>
 </body>
 </html>

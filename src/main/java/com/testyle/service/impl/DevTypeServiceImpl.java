@@ -18,6 +18,11 @@ public class DevTypeServiceImpl implements IDevTypeService {
     }
 
     @Override
+    public DevType select(long typeID) {
+        return devTypeDao.selectByID(typeID);
+    }
+
+    @Override
     public int insert(DevType devType) {
         return devTypeDao.insert(devType);
     }
