@@ -1,6 +1,8 @@
 package com.testyle.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.aspose.cells.SaveFormat;
+import com.aspose.cells.Worksheet;
 import com.testyle.common.ExcelUtils;
 import com.testyle.common.ResContent;
 import com.testyle.common.Utils;
@@ -12,6 +14,7 @@ import com.testyle.service.IProService;
 import com.testyle.service.IRecordService;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,7 +47,12 @@ public class ProController {
 
     String charact = "UTF-8";
     String root = "E:/file/";
-    String testRoot="E:/testFile/";
+    @Value("${testPath}")
+    String testRoot;
+    @Value("${repPath}")
+    String repPath;
+    @Value("${repUrl}")
+    String repUrl;
 
     @RequestMapping("/index")
     public void index(HttpServletResponse response) throws IOException {
@@ -78,6 +86,8 @@ public class ProController {
             projectTemp.setProType(1);
             List<Project> list=proService.select(projectTemp);
             if(readDefaultNum(url)==1&&list.size()==0) {
+                project.setProType(1);
+                project.setProID(-1);
                 ID = proService.insert(project);
                 if (ID > 0) {
                     readExcel(url, project.getProID(), 3);
@@ -159,9 +169,10 @@ public class ProController {
                     if (objects.size() > 0) {
                         resContent.setCode(101);
                         resContent.setMessage("获取成功");
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("url", testUrl);
-                        map.put("records", objects);
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("url", testUrl);
+                            map.put("records", objects);
+                            map.put("remark","");
                         resContent.setData(map);
                     } else {
                         resContent.setCode(102);
@@ -394,5 +405,56 @@ public class ProController {
         headers.setContentDispositionFormData("attachment",filename);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),headers, HttpStatus.OK);
+    }
+
+    @RequestMapping("/report")
+    public void report(HttpServletRequest request,HttpServletResponse response)throws IOException{
+        response.setCharacterEncoding(charact);
+        ResContent resContent=new ResContent();
+        try {
+            String path=request.getParameter("path");
+            String fname=request.getParameter("fname");
+            String pdfUrl=toPDF(path,fname);
+            if(pdfUrl!=null) {
+                resContent.setCode(101);
+                resContent.setMessage("获取成功");
+                resContent.setData(pdfUrl);
+            }else {
+                resContent.setCode(102);
+                resContent.setMessage("PDF获取失败");
+            }
+        }catch (Exception e){
+            resContent.setCode(103);
+            resContent.setMessage("获取失败");
+        }
+        response.getWriter().write(JSON.toJSONString(resContent));
+        response.getWriter().close();
+    }
+
+    private String toPDF(String path, String fname) {
+        if (false) {
+            return null;
+        }else {
+            try {
+                String pdfPath = repPath + fname + ".pdf";
+                String pdfUrl = repUrl + fname + ".pdf";
+                File pdfFile = new File(pdfPath);// 输出路径
+                if (pdfFile.exists()) {
+                    pdfFile.delete();
+                }
+                com.aspose.cells.Workbook wb = new com.aspose.cells.Workbook(path);// 原始excel路径
+                FileOutputStream fileOS = new FileOutputStream(pdfFile);
+                for (int i = 1; i < wb.getWorksheets().getCount(); i++)
+                {
+                    wb.getWorksheets().get(i).setVisible(false);
+                }
+                wb.save(fileOS, SaveFormat.PDF);
+                fileOS.close();
+                return pdfUrl;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 }

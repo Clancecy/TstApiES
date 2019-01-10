@@ -82,6 +82,7 @@ public class DataController {
                 resContent.setCode(101);
                 resContent.setMessage("计算成功");
                 getListComExcel(recordList, excelRecords);
+                System.out.println("8080出来的："+JSON.toJSONString(recordList));
                 resContent.setData(recordList);
             } else {
                 resContent.setCode(105);
@@ -93,20 +94,30 @@ public class DataController {
     }
 
     @RequestMapping("/get")
-    public void getData(Data data, HttpServletResponse response) throws IOException {
+    public void getData(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding(charact);
         ResContent resContent = new ResContent();
-        if (data.getDataVal() == null || "".equals(data.getDataVal())) {
+        String dataVal=request.getParameter("dataVal");
+        String remark=request.getParameter("remark");
+        String url=request.getParameter("url");
+        if(url==null){
+            url="";
+        }
+        if (dataVal == null || "".equals(dataVal)) {
             resContent.setCode(103);
             resContent.setMessage("参数错误");
         }else {
             try {
-                List<Data> dataList = (List<Data>) JSON.parseArray(data.getDataVal(), Data.class);
-                Project project= toProject(dataList);
+                List<Data> dataList = (List<Data>) JSON.parseArray(dataVal, Data.class);
+                List<Record> records= toRecords(dataList);
               //  List<Project> projects = toProjects(dataList);
+                Map<String, Object> map = new HashMap<>();
+                map.put("records", records);
+                map.put("remark",remark);
+                map.put("url",url);
                 resContent.setCode(101);
                 resContent.setMessage("获取成功");
-                resContent.setData(project);
+                resContent.setData(map);
             } catch (JSONException jsone) {
                 jsone.printStackTrace();
                 resContent.setCode(104);
@@ -122,14 +133,11 @@ public class DataController {
         response.getWriter().close();
     }
 
-    private Project toProject(List<Data> dataList) {
+    private List<Record> toRecords(List<Data> dataList) {
         long proID=dataList.get(0).getProID();
-        Project project = new Project();
-        project.setProID(proID);
-        project=proService.select(project).get(0);
-        project.setRecords(getDbRecords(dataList, proID));
-        return project;
+        return getDbRecords(dataList, proID);
     }
+
 
     private List<Project> toProjects(List<Data> dataList) {
         Map<Long, Integer> map = new HashMap<>();

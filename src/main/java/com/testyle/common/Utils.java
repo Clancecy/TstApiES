@@ -363,8 +363,8 @@ public class Utils {
         try {
             String licenseurl = Utils.class.getClassLoader().getResource("licenseforcell.xml").getPath();;// license路径
             InputStream license=new FileInputStream(licenseurl);
-            License aposeLic = new License();
-            aposeLic.setLicense(license);
+            License a=new License();
+            a.setLicense(license);
             result = true;
         } catch (Exception e) {
             e.printStackTrace();

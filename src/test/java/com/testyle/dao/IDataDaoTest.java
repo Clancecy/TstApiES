@@ -194,9 +194,13 @@ public class IDataDaoTest {
             return;
         }
         try {
-            File pdfFile = new File("E:/reportPDF/test1.pdf");// 输出路径
-            Workbook wb = new Workbook("E:/reportPDF/油浸式模板.xlsx");// 原始excel路径
+            File pdfFile = new File("E:/testFile/test1.pdf");// 输出路径
+            Workbook wb = new Workbook("E:/testFile/三项油浸式变压器test28task24pro38.xlsx");// 原始excel路径
             FileOutputStream fileOS = new FileOutputStream(pdfFile);
+            for (int i = 1; i < wb.getWorksheets().getCount(); i++)
+            {
+                wb.getWorksheets().get(i).setVisible(false);
+            }
             wb.save(fileOS, SaveFormat.PDF);
             fileOS.close();
         } catch (Exception e) {
