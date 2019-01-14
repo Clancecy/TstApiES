@@ -8,11 +8,11 @@
     </resultMap>
 
     <select id="selectByID" resultType="DevType" parameterType="Long">
-        select * from devType where typeID=#{typeID}
+        select * from devtype where typeID=#{typeID}
 
     </select>
     <select id="select" resultMap="listDevType" parameterType="DevType">
-        select * from devType
+        select * from devtype
         <where>
             <if test="typeID!=-1">
                 and typeID=#{typeID}
@@ -30,11 +30,11 @@
         #{pTypeID},#{addtime} )
     </insert>
     <delete id="delete" parameterType="long">
-        delete from devType where typeID=#{typeID}
+        delete from devtype where typeID=#{typeID}
     </delete>
 
     <update id="update" parameterType="TypeAttr">
-        update devType
+        update devtype
         set typeName=#{typeName},pTypeID=#{pTypeID} ,addtime=#{addtime} where typeID=#{typeID}
     </update>
 

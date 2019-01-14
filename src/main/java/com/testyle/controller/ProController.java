@@ -457,4 +457,35 @@ public class ProController {
             }
         }
     }
+
+
+    @RequestMapping("/uploadCover")
+    public void doUploadCover(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding(charact);
+        ResContent resContent = new ResContent();
+        if (!file.isEmpty()) {
+            FileUtils.copyInputStreamToFile(file.getInputStream(), new File(
+                    root,
+                    file.getOriginalFilename()));
+        }
+        String url = root + file.getOriginalFilename();
+        long devTypeID = Long.parseLong(request.getParameter("devTypeID"));
+        String temp=file.getOriginalFilename();
+        String fileName=temp.split("\\.")[0];
+        Project project = new Project();
+        project.setUrl(url);
+        project.setProName(fileName);
+        project.setDevTypeID(devTypeID);
+        project.setProType(3);
+        long ID = proService.insert(project);
+        if (ID > 0) {
+            resContent.setCode(101);
+            resContent.setMessage("上传成功");
+        } else {
+            resContent.setCode(102);
+            resContent.setMessage("上传失败");
+        }
+        response.getWriter().write(JSON.toJSONString(resContent));
+        response.getWriter().close();
+    }
 }

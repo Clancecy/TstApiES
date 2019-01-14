@@ -12,13 +12,13 @@
 <div align="center">
 
     <h1>上传附件</h1>
-    <form method="post" action="/project/upload" enctype="multipart/form-data">
+    <form method="post" action="http://47.98.136.246/ES/project/upload" enctype="multipart/form-data">
         <input type="file" name="file"/>
         <input type="text" name="devTypeID">
         <button type="submit" >提交</button>
     </form>
     <h1>下载文件</h1>
-    <a href="/project/down" download="直流电阻模板.xlsx">点击下载</a>
+    <a href="http://47.98.136.246/ES/project/down" download="直流电阻模板.xlsx">点击下载</a>
     <%--<a href="/download?直流电阻模板.xlsx">下载</a>--%>
 </div>
 </body>

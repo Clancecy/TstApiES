@@ -46,7 +46,7 @@
 
     <context-param>
         <param-name>webAppRootKey</param-name>
-        <param-value>root</param-value>
+        <param-value>tstES</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>

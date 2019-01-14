@@ -10,7 +10,7 @@
     </resultMap>
 
     <select id="select" resultMap="listPro" parameterType="Project">
-        select * from Pro
+        select * from pro
         <where>
             <if test="proID!=-1">
                 and proID=#{proID}
@@ -30,15 +30,15 @@
         <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="proID">
             SELECT @@IDENTITY
         </selectKey>
-        INSERT into Pro (proName,devTypeID,url,proType,addtime) values (#{proName},
+        INSERT into pro (proName,devTypeID,url,proType,addtime) values (#{proName},
         #{devTypeID},#{url},#{proType},#{addtime} )
     </insert>
     <delete id="delete" parameterType="long">
-        delete from Pro where proID=#{proID}
+        delete from pro where proID=#{proID}
     </delete>
 
     <update id="update" parameterType="Project">
-        update Pro
+        update pro
         set proName=#{proName},devTypeID=#{devTypeID} ,url=#{url},proType=#{proType},addtime=#{addtime} where proID=#{proID}
     </update>
 
