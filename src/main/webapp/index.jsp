@@ -11,10 +11,16 @@
 <body>
 <div align="center">
 
-    <h1>上传附件</h1>
+    <h1>上传项目模板</h1>
     <form method="post" action="http://47.98.136.246/ES/project/upload" enctype="multipart/form-data">
         <input type="file" name="file"/>
-        <input type="text" name="devTypeID">
+        <input type="text" text="设备类型ID:" name="devTypeID">
+        <button type="submit" >提交</button>
+    </form>
+    <h1>上传报告模板封面</h1>
+    <form method="post" action="/ES/project/uploadCover" enctype="multipart/form-data">
+        <input type="file" name="file"/>
+        <input type="text" text="设备类型ID:" name="devTypeID">
         <button type="submit" >提交</button>
     </form>
     <h1>下载文件</h1>

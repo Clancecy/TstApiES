@@ -9,4 +9,5 @@ public interface IProDao {
     int insert(Project project);
     int delete(long ID);
     int update(Project project);
+    List<Project> selectList(List<Long> proIDs);
 }

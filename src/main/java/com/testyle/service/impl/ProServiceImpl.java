@@ -36,4 +36,9 @@ public class ProServiceImpl implements IProService {
     public int update(Project project) {
         return proDao.update(project);
     }
+
+    @Override
+    public List<Project> select(List<Long> proIDs) {
+        return proDao.selectList(proIDs);
+    }
 }

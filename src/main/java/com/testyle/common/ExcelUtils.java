@@ -189,22 +189,22 @@ public class ExcelUtils {
         return j;
     }
 
-    /**
-     * 设置表格宽度
-     * @param sheetDist
-     * @param sheetSrc
-     */
-    public  void setColumnWidth(Sheet sheetDist, Sheet sheetSrc) {
-        int colCount = 0;
-        // 遍历获取列数
-        for (Row row : sheetSrc) {
-            colCount = Math.max(colCount, row.getPhysicalNumberOfCells());
-        }
-        // 设置宽度
-        for (int i = 0; i < colCount; i++) {
-            sheetDist.setColumnWidth(i, sheetSrc.getColumnWidth(i));
-        }
-    }
+//    /**
+//     * 设置表格宽度
+//     * @param sheetDist
+//     * @param sheetSrc
+//     */
+//    public  void setColumnWidth(Sheet sheetDist, Sheet sheetSrc) {
+//        int colCount = 0;
+//        // 遍历获取列数
+//        for (Row row : sheetSrc) {
+//            colCount = Math.max(colCount, row.getPhysicalNumberOfCells());
+//        }
+//        // 设置宽度
+//        for (int i = 0; i < colCount; i++) {
+//            sheetDist.setColumnWidth(i, sheetSrc.getColumnWidth(i));
+//        }
+//    }
 
     /**
      * 合并sheet到sheet1
@@ -233,6 +233,7 @@ public class ExcelUtils {
      * @param referRow
      */
     private void copyRow(Row newRow, Row referRow) {
+        FormulaEvaluator evaluator=referRow.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
         newRow.setHeight(referRow.getHeight());
         for (int i = 0; i < referRow.getPhysicalNumberOfCells(); i++) {
             Cell newCell = newRow.createCell(i);
@@ -254,6 +255,15 @@ public class ExcelUtils {
                 case NUMERIC:
                     newCell.setCellType(CellType.NUMERIC);
                     newCell.setCellValue(referCell.getNumericCellValue());
+                    break;
+                case FORMULA:
+                    CellValue cellValue=evaluator.evaluate(referCell);
+                    try {
+
+                        newCell.setCellValue(cellValue.getNumberValue());
+                    } catch (IllegalStateException e) {
+                        newCell.setCellValue(cellValue.getStringValue());
+                    }
                     break;
                 case STRING:
                     newCell.setCellType(CellType.STRING);
@@ -289,6 +299,27 @@ public class ExcelUtils {
             CellRangeAddress address = sheet2.getMergedRegion(i);
             sheet1.addMergedRegion(new CellRangeAddress(address.getFirstRow()+startRow, address.getLastRow()+startRow,
                     address.getFirstColumn(), address.getLastColumn()));
+        }
+    }
+
+    /**
+     * 设置表格宽度
+     *
+     * @param sheet
+     */
+    public static void setColumnWidth(Sheet sheet) {
+        int colCount = 0;
+        int width = 22000;	// pdf总宽度
+        // 遍历获取列数
+        for (Row row : sheet) {
+            colCount = Math.max(colCount, row.getPhysicalNumberOfCells());
+        }
+        width = width / colCount;
+        System.out.println(sheet.getColumnWidth(0));
+        System.out.println(width);
+        // 设置宽度
+        for (int i = 0; i < colCount; i++) {
+            sheet.setColumnWidth(i, width);
         }
     }
 }

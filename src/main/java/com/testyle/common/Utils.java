@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -370,5 +372,16 @@ public class Utils {
             e.printStackTrace();
         }
         return result;
+    }
+    /**
+     * 生成 日期+随机数的流水号
+     * */
+    public static String getNumberForPK(){
+        String id="";
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String temp = sf.format(new Date());
+        int random=(int) (Math.random()*10000);
+        id=temp+random;
+        return id;
     }
 }

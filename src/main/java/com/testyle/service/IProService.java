@@ -9,4 +9,5 @@ public interface IProService {
     int insert(Project project);
     int delete(long ID);
     int update(Project project);
+    List<Project> select(List<Long> proIDs);
 }

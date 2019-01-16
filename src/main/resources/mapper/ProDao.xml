@@ -6,11 +6,20 @@
         <result property="proName" column="proName"></result>
         <result property="url" column="url"></result>
         <result property="devTypeID" column="devTypeID"></result>
+        <result property="devTypeName" column="devTypeName"></result>
         <result property="addtime" column="addtime"></result>
     </resultMap>
 
+    <select id="selectList" resultMap="listPro" parameterType="List">
+        select a.*,b.typeName as devTypeName from pro a left join devtype b on a.devTypeID=b.typeID
+         where a.proID in
+        <foreach collection="list" item="proID" open="(" close=")" separator=",">
+            #{proID}
+        </foreach>
+    </select>
+
     <select id="select" resultMap="listPro" parameterType="Project">
-        select * from pro
+        select a.*,b.typeName as devTypeName from pro a left join devtype b on a.devTypeID=b.typeID
         <where>
             <if test="proID!=-1">
                 and proID=#{proID}

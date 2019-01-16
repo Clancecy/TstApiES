@@ -7,8 +7,17 @@ public class Device {
     String devName;
     String devCode;
     long devTypeID=-1;
+    String devTypeName;
     long staID=-1;
     Date addtime =new Date();
+
+    public String getDevTypeName() {
+        return devTypeName;
+    }
+
+    public void setDevTypeName(String devTypeName) {
+        this.devTypeName = devTypeName;
+    }
 
     public String getDevCode() {
         return devCode;

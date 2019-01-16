@@ -62,10 +62,6 @@ public class ReportController {
                         workbookSrc.setForceFormulaRecalculation(true);
                         Sheet sheetSrc = workbookSrc.getSheetAt(0);
                         excelUtils.mergeSheet(sheetDist, sheetSrc);
-                        // 设置宽度
-                        if (0 == i) {
-                            excelUtils.setColumnWidth(sheetDist, sheetSrc);
-                        }
                         workbookSrc.close();
                         fis.close();
                     }

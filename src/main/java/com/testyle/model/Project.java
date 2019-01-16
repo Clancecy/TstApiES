@@ -8,12 +8,21 @@ public class Project {
     String proName;
     String Url;
     long devTypeID=-1;
+    String devTypeName;
     int proType=-1;
     Date addtime=new Date();
     List<Record> records;
 
     public List<Record> getRecords() {
         return records;
+    }
+
+    public String getDevTypeName() {
+        return devTypeName;
+    }
+
+    public void setDevTypeName(String devTypeName) {
+        this.devTypeName = devTypeName;
     }
 
     public void setRecords(List<Record> records) {
