@@ -309,7 +309,8 @@ public class ExcelUtils {
      */
     public static void setColumnWidth(Sheet sheet) {
         int colCount = 0;
-        int width = 22000;	// pdf总宽度
+        int width = 22000;	// pdf总宽度22000
+        width = (int) ((88 + 0.72) * 256);
         // 遍历获取列数
         for (Row row : sheet) {
             colCount = Math.max(colCount, row.getPhysicalNumberOfCells());

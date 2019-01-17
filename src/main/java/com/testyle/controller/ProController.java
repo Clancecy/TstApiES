@@ -515,8 +515,8 @@ public class ProController {
             String paths = request.getParameter("pathList");
             String fname = request.getParameter("fname");
             List<String> pathList = JSON.parseArray(paths, String.class);
-            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
             String pdfUrl = pathListtoPDF(pathList, fname);
+            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
             File file = new File(pdfUrl);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", fname);
@@ -539,9 +539,9 @@ public class ProController {
             for (Project project : projectList) {
                 pathList.add(project.getUrl());
             }
-            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
             String pdfUrl = pathListtoPDF(pathList, fname);
             File file = new File(pdfUrl);
+            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", fname);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -616,9 +616,10 @@ public class ProController {
         Project project = new Project();
         project.setProID(proID);
         project = proService.select(project).get(0);
-        String fname = URLEncoder.encode(project.getProName() + ".pdf", "UTF-8");
+        String fname=project.getProName();
         String path = project.getUrl();
         String pdfUrl = toPDF(path, fname);
+        fname = URLEncoder.encode(project.getProName() + ".pdf", "UTF-8");
 //        File file = new File("E:\\file\\直流电阻模板.xlsx");
 //        String fname = "直流电阻模板.xlsx";
         pdfUrl = pdfUrl.replace(repUrl, repPath);
@@ -686,9 +687,9 @@ public class ProController {
                 }
                 wb.save(fileOS, SaveFormat.PDF);
                 fileOS.close();
-                File temp = new File(fnameDist);
-                if (temp.exists())
-                    temp.delete();
+//                File temp = new File(fnameDist);
+//                if (temp.exists())
+//                    temp.delete();
                 return pdfUrl;
             } catch (Exception e) {
                 e.printStackTrace();
