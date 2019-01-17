@@ -542,10 +542,9 @@ public class ProController {
             for (Project project : projectList) {
                 pathList.add(project.getUrl());
             }
-            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
             String pdfUrl = pathListtoPDF(pathList, fname);
             File file = new File(pdfUrl);
-
+            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", fname);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -562,14 +561,11 @@ public class ProController {
         } else {
             try {
                 ExcelUtils excelUtils=new ExcelUtils();
-                String pdfPath = repPath + fname;
+                String pdfPath = repPath + fname+".pdf";
                 File pdfFile = new File(pdfPath);// 输出路径
-                if (pdfFile.exists()) {
-                    pdfFile.delete();
-                }
                 String tempath=pathList.get(0);
                 File soure = new File(tempath);
-                File target = new File(fname+Utils.getNumberForPK()+".xlsx");
+                File target = new File(repPath+fname+Utils.getNumberForPK()+".xlsx");
                 String fnameDist = target.getPath();
                 FileUtils.copyFile(soure, target);
                 FileInputStream fisDist = new FileInputStream(fnameDist);
@@ -621,9 +617,9 @@ public class ProController {
         project.setProID(proID);
         project = proService.select(project).get(0);
         String fname=project.getProName();
-        fname = URLEncoder.encode(project.getProName()+".pdf", "UTF-8");
         String path = project.getUrl();
         String pdfUrl = toPDF(path, fname);
+        fname = URLEncoder.encode(project.getProName()+".pdf", "UTF-8");
 //        File file = new File("E:\\file\\直流电阻模板.xlsx");
 //        String fname = "直流电阻模板.xlsx";
         File file = new File(pdfUrl);
@@ -656,8 +652,7 @@ public class ProController {
             return null;
         } else {
             try {
-                String pdfPath = repPath + fname;
-                String pdfUrl = repUrl + fname;
+                String pdfPath = repPath + fname+".pdf";
                 File pdfFile = new File(pdfPath);// 输出路径
                 if (pdfFile.exists()) {
                     pdfFile.delete();
@@ -671,7 +666,7 @@ public class ProController {
                 }
                 Sheet sheetDist = workbookDist.createSheet();
                 FileInputStream fis = new FileInputStream(path);
-                org.apache.poi.ss.usermodel.Workbook workbookSrc = WorkbookFactory.create(fis);
+                Workbook workbookSrc = WorkbookFactory.create(fis);
                 workbookSrc.setForceFormulaRecalculation(true);
                 Sheet sheetSrc = workbookSrc.getSheetAt(0);
                 ExcelUtils excelUtils = new ExcelUtils();
