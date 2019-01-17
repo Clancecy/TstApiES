@@ -47,7 +47,8 @@ public class ProController {
     private IItemService itemService;
 
     String charact = "UTF-8";
-    String root = "E:/file/";
+    @Value("${filePath}")
+    String root;
     @Value("${testPath}")
     String testRoot;
     @Value("${repPath}")
@@ -97,6 +98,7 @@ public class ProController {
                         readExcel(url, project.getProID(), 3);
                         resContent.setCode(101);
                         resContent.setMessage("上传成功");
+                        resContent.setData(url);
                     } else {
                         resContent.setCode(102);
                         resContent.setMessage("上传失败");
@@ -104,6 +106,7 @@ public class ProController {
                 }
                 resContent.setCode(101);
                 resContent.setMessage("上传成功");
+                resContent.setData(url);
             } else {
                 resContent.setCode(102);
                 resContent.setMessage("上传失败");
@@ -502,7 +505,7 @@ public class ProController {
 
     @RequestMapping("/down")
     public ResponseEntity<byte[]> filedownload(HttpServletRequest request) throws Exception {
-        File file = new File("E:\\file\\直流电阻模板.xlsx");
+        File file = new File("/file/直流电阻模板.xlsx");
         String filename = "直流电阻模板.xlsx";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData("attachment", filename);
@@ -539,9 +542,10 @@ public class ProController {
             for (Project project : projectList) {
                 pathList.add(project.getUrl());
             }
+            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
             String pdfUrl = pathListtoPDF(pathList, fname);
             File file = new File(pdfUrl);
-            fname = URLEncoder.encode(fname + ".pdf", "UTF-8");
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", fname);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -558,7 +562,7 @@ public class ProController {
         } else {
             try {
                 ExcelUtils excelUtils=new ExcelUtils();
-                String pdfPath = repPath + fname + ".pdf";
+                String pdfPath = repPath + fname;
                 File pdfFile = new File(pdfPath);// 输出路径
                 if (pdfFile.exists()) {
                     pdfFile.delete();
@@ -617,12 +621,11 @@ public class ProController {
         project.setProID(proID);
         project = proService.select(project).get(0);
         String fname=project.getProName();
+        fname = URLEncoder.encode(project.getProName()+".pdf", "UTF-8");
         String path = project.getUrl();
         String pdfUrl = toPDF(path, fname);
-        fname = URLEncoder.encode(project.getProName() + ".pdf", "UTF-8");
 //        File file = new File("E:\\file\\直流电阻模板.xlsx");
 //        String fname = "直流电阻模板.xlsx";
-        pdfUrl = pdfUrl.replace(repUrl, repPath);
         File file = new File(pdfUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData("attachment", fname);
@@ -635,10 +638,9 @@ public class ProController {
         try {
             String path = request.getParameter("path");
             String fname = request.getParameter("fname");
-            String pdfUrl = toPDF(path, fname);
-            pdfUrl = pdfUrl.replace(repUrl, repPath);
-            File file = new File(pdfUrl);
             fname = URLEncoder.encode(fname, charact);
+            String pdfUrl = toPDF(path, fname);
+            File file = new File(pdfUrl);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", fname);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -654,8 +656,8 @@ public class ProController {
             return null;
         } else {
             try {
-                String pdfPath = repPath + fname + ".pdf";
-                String pdfUrl = repUrl + fname + ".pdf";
+                String pdfPath = repPath + fname;
+                String pdfUrl = repUrl + fname;
                 File pdfFile = new File(pdfPath);// 输出路径
                 if (pdfFile.exists()) {
                     pdfFile.delete();
@@ -687,10 +689,10 @@ public class ProController {
                 }
                 wb.save(fileOS, SaveFormat.PDF);
                 fileOS.close();
-//                File temp = new File(fnameDist);
-//                if (temp.exists())
-//                    temp.delete();
-                return pdfUrl;
+                File temp = new File(fnameDist);
+                if (temp.exists())
+                    temp.delete();
+                return pdfPath;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

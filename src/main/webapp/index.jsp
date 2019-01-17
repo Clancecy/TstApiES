@@ -12,7 +12,7 @@
 <div align="center">
 
     <h1>上传项目模板</h1>
-    <form method="post" action="http://47.98.136.246/ES/project/upload" enctype="multipart/form-data">
+    <form method="post" action="/ES/project/upload" enctype="multipart/form-data">
         <input type="file" name="file"/>
         <input type="text" text="设备类型ID:" name="devTypeID">
         <button type="submit" >提交</button>
