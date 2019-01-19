@@ -148,98 +148,63 @@ public class ProController {
     public void getPro(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding(charact);
         ResContent resContent = new ResContent();
-        long proID = Long.parseLong(request.getParameter("proID"));
-        long testID = Long.parseLong(request.getParameter("testID"));
-        long taskID = Long.parseLong(request.getParameter("taskID"));
-        if (request.getParameter("proID") == null
-                || request.getParameter("testID") == null
-                || request.getParameter("taskID") == null) {
-            resContent.setCode(103);
-            resContent.setMessage("参数错误");
-        } else {
-            Project project = new Project();
-            project.setProID(proID);
-            List<Project> projectList = proService.select(project);
-            if (projectList == null || projectList.size() == 0) {
-                resContent.setCode(104);
-                resContent.setMessage("没有该项目");
-            } else {
-                project = projectList.get(0);
-                String url = project.getUrl();
-                int num = readRecordNum(url);
-                String code = "test" + testID + "task" + taskID + "pro" + proID;
-                Record record = new Record();
-                record.setProID(proID);
-                List<Record> records = recordService.select(record);
-                List<Record> objects = dealRecords(records);
-                Record chunk = objects.get(objects.size() - 1);
-                for (int i = 0; i < num - 1; i++) {
-                    addRecord(chunk, i);
-                }
-                String testUrl = addExcel(project, code, num, url, objects, resContent);
-                if (resContent.getCode() != 105) {
-                    if (objects.size() > 0) {
-                        resContent.setCode(101);
-                        resContent.setMessage("获取成功");
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("url", testUrl);
-                        map.put("records", objects);
-                        map.put("remark", "");
-                        resContent.setData(map);
-                    } else {
-                        resContent.setCode(102);
-                        resContent.setMessage("获取失败");
-                    }
-                }
-            }
-        }
-        response.getWriter().write(JSON.toJSONString(resContent));
-        response.getWriter().close();
-    }
+        try {
 
-    @RequestMapping("/getDefault")
-    public void getProDefault(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setCharacterEncoding(charact);
-        ResContent resContent = new ResContent();
-        long proID = Long.parseLong(request.getParameter("proID"));
-        if (request.getParameter("proID") == null) {
-            resContent.setCode(103);
-            resContent.setMessage("参数错误");
-        } else {
-            Project project = new Project();
-            project.setProID(proID);
-            List<Project> projectList = proService.select(project);
-            if (projectList == null || projectList.size() == 0) {
-                resContent.setCode(104);
-                resContent.setMessage("没有该项目");
+
+            long proID = Long.parseLong(request.getParameter("proID"));
+            long testID = Long.parseLong(request.getParameter("testID"));
+            long taskID = Long.parseLong(request.getParameter("taskID"));
+            int recordNum = Integer.parseInt(request.getParameter("recordNum"));
+            if (request.getParameter("proID") == null
+                    || request.getParameter("testID") == null
+                    || request.getParameter("taskID") == null) {
+                resContent.setCode(103);
+                resContent.setMessage("参数错误");
             } else {
-                project = projectList.get(0);
-                String url = project.getUrl();
-                int num = readRecordNum(url);
-                String code = "";
-                Record record = new Record();
-                record.setProID(proID);
-                List<Record> records = recordService.select(record);
-                List<Record> objects = dealRecords(records);
-                Record chunk = objects.get(objects.size() - 1);
-                for (int i = 0; i < num - 1; i++) {
-                    addRecord(chunk, i);
-                }
-                String testUrl = addExcel(project, code, num, url, objects, resContent);
-                if (resContent.getCode() != 105) {
-                    if (objects.size() > 0) {
-                        resContent.setCode(101);
-                        resContent.setMessage("获取成功");
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("url", testUrl);
-                        map.put("records", objects);
-                        resContent.setData(map);
-                    } else {
-                        resContent.setCode(102);
-                        resContent.setMessage("获取失败");
+                Project project = new Project();
+                project.setProID(proID);
+                List<Project> projectList = proService.select(project);
+                if (projectList == null || projectList.size() == 0) {
+                    resContent.setCode(104);
+                    resContent.setMessage("没有该项目");
+                } else {
+                    project = projectList.get(0);
+                    String url = project.getUrl();
+                    int num = readRecordNum(url);
+                    String code = "test" + testID + "task" + taskID + "pro" + proID;
+                    Record record = new Record();
+                    record.setProID(proID);
+                    List<Record> records = recordService.select(record);
+                    List<Record> objects = dealRecords(records);
+                    Record chunk = objects.get(objects.size() - 1);
+                    if (num == 1) {
+                        for (int i = 0; i < recordNum - 1; i++) {
+                            addRecord(chunk, i);
+                        }
+                    }
+                    String testUrl = addExcel(project, code, num, url, objects, resContent);
+                    if (resContent.getCode() != 105) {
+                        if (objects.size() > 0) {
+                            resContent.setCode(101);
+                            resContent.setMessage("获取成功");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("url", testUrl);
+                            map.put("records", objects);
+                            map.put("remark", "");
+                            resContent.setData(map);
+                        } else {
+                            resContent.setCode(102);
+                            resContent.setMessage("获取失败");
+                        }
                     }
                 }
             }
+        }catch (NumberFormatException ne){
+            resContent.setCode(103);
+            resContent.setMessage("参数错误");
+        }catch (Exception ne){
+            resContent.setCode(104);
+            resContent.setMessage("参数错误");
         }
         response.getWriter().write(JSON.toJSONString(resContent));
         response.getWriter().close();
@@ -257,7 +222,7 @@ public class ProController {
             List<Project> projectList = proService.select(project);
             if (projectList.size() == 0) {
                 resContent.setCode(104);
-                resContent.setMessage("没有出厂值");
+                resContent.setMessage("无需设置出厂值");
             } else {
                 project = projectList.get(0);
                 Record record = new Record();
@@ -273,27 +238,6 @@ public class ProController {
                     resContent.setMessage("获取失败");
                 }
             }
-        }
-        response.getWriter().write(JSON.toJSONString(resContent));
-        response.getWriter().close();
-    }
-
-    @RequestMapping("/proDefault")
-    public void proDefa(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setCharacterEncoding(charact);
-        ResContent resContent = new ResContent();
-        long proID = Long.parseLong(request.getParameter("proID"));
-        Project project = new Project();
-        project.setProID(proID);
-        project = proService.select(project).get(0);
-        String url = project.getUrl();
-        int num = readDefaultNum(url);
-        if (num > 0) {
-            resContent.setCode(101);
-            resContent.setMessage("需要出厂值");
-        } else {
-            resContent.setCode(102);
-            resContent.setMessage("不需要出厂值");
         }
         response.getWriter().write(JSON.toJSONString(resContent));
         response.getWriter().close();
@@ -334,7 +278,7 @@ public class ProController {
 
             FileInputStream fis = new FileInputStream(testUrl);
             Workbook workbook = WorkbookFactory.create(fis);
-            int addRecordNum = utils.writeToItemExcel(workbook, objects);
+            int addRecordNum = utils.writeToItemExcel(workbook, objects,1);
             utils.writeToReportExcel(workbook.getSheetAt(0), addRecordNum);
             FileOutputStream fos = new FileOutputStream(testUrl);
             workbook.write(fos);
@@ -530,13 +474,28 @@ public class ProController {
             return null;
         }
     }
+    @RequestMapping("/llPdf")
+    public void llPdf(@RequestParam("proIDs")List<Long> proIDList, HttpServletRequest request,HttpServletResponse response) throws Exception {
+        ResContent resContent=new ResContent();
+        resContent.setMessage(request.toString());
+        try {
+            response.setCharacterEncoding(charact);
+//            String proIDs = request.getParameter("proIDs");
+            String fname = request.getParameter("fname");
+            resContent.setCode(101);
+            resContent.setMessage(JSON.toJSONString(proIDList));
+            resContent.setData(fname);
+        }catch (Exception e){
+            resContent.setMessage(e.getMessage());
+        }
+        response.getWriter().write(JSON.toJSONString(resContent));
+        response.getWriter().close();
+    }
 
     @RequestMapping("/listPdf")
-    public ResponseEntity<byte[]> listPdf(HttpServletRequest request) throws Exception {
+    public ResponseEntity<byte[]> listPdf(@RequestParam("proIDs")List<Long> proIDList,HttpServletRequest request,HttpServletResponse response) throws Exception {
         try {
-            String proIDs = request.getParameter("proIDs");
             String fname = request.getParameter("fname");
-            List<Long> proIDList = JSON.parseArray(proIDs, Long.class);
             List<Project> projectList = proService.select(proIDList);
             List<String> pathList = new ArrayList<>();
             for (Project project : projectList) {
@@ -551,6 +510,11 @@ public class ProController {
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
+            ResContent resContent=new ResContent();
+            response.setCharacterEncoding(charact);
+            resContent.setMessage(e.getMessage());
+            response.getWriter().write(JSON.toJSONString(resContent));
+            response.getWriter().close();
             return null;
         }
     }
@@ -563,6 +527,9 @@ public class ProController {
                 ExcelUtils excelUtils=new ExcelUtils();
                 String pdfPath = repPath + fname+".pdf";
                 File pdfFile = new File(pdfPath);// 输出路径
+                if (pdfFile.exists()) {
+                    pdfFile.delete();
+                }
                 String tempath=pathList.get(0);
                 File soure = new File(tempath);
                 File target = new File(repPath+fname+Utils.getNumberForPK()+".xlsx");

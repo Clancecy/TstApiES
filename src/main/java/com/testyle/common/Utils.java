@@ -199,9 +199,9 @@ public class Utils {
         return itemList;
     }
 
-    public int writeToItemExcel(Workbook wb, List<Record> newList) {
+    public int writeToItemExcel(Workbook wb, List<Record> newList,int sheetAt) {
         ExcelUtils excelUtils=new ExcelUtils();
-        Sheet sheet=wb.getSheetAt(1);
+        Sheet sheet=wb.getSheetAt(sheetAt);
         int oldRowCount = sheet.getPhysicalNumberOfRows();
         int rowCount = sheet.getPhysicalNumberOfRows();
         int chunkCount = newList.size();

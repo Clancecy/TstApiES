@@ -46,6 +46,7 @@ public class DataController {
         Utils utils = new Utils();
         ResContent resContent = new ResContent();
         String fname =request.getParameter("url");
+        String defaultVal=request.getParameter("default");
         if (data.getDataVal() == null
         ||fname=="") {
             resContent.setCode(104);
@@ -57,9 +58,16 @@ public class DataController {
                 FileInputStream fis = new FileInputStream(fname);
                 Workbook workbook = WorkbookFactory.create(fis);
                 // 写入新内容到字段表
-                int addRecordNum = utils.writeToItemExcel(workbook, recordList);
+                int addRecordNum = utils.writeToItemExcel(workbook, recordList,1);
                 // 写入新内容到显示表
                 utils.writeToReportExcel(workbook.getSheetAt(0), addRecordNum);
+
+                //写入出厂值
+                List<Data> dataList = (List<Data>) JSON.parseArray(defaultVal, Data.class);
+                if(dataList.size()!=0) {
+                    List<Record> defaultRecords = toRecords(dataList);
+                    utils.writeToItemExcel(workbook, defaultRecords, 4);
+                }
                 // 执行公式
                 workbook.setForceFormulaRecalculation(true);
                 // 写入文件并关闭流
@@ -118,6 +126,36 @@ public class DataController {
                 resContent.setCode(101);
                 resContent.setMessage("获取成功");
                 resContent.setData(map);
+            } catch (JSONException jsone) {
+                jsone.printStackTrace();
+                resContent.setCode(104);
+                resContent.setMessage(jsone.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                resContent.setCode(102);
+                resContent.setMessage("获取失败");
+            }
+        }
+        System.out.println(JSON.toJSONString(resContent));
+        response.getWriter().write(JSON.toJSONString(resContent));
+        response.getWriter().close();
+    }
+
+    @RequestMapping("/getDefault")
+    public void getDefualtData(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding(charact);
+        ResContent resContent = new ResContent();
+        String dataVal=request.getParameter("dataVal");
+        if (dataVal == null || "".equals(dataVal)) {
+            resContent.setCode(103);
+            resContent.setMessage("参数错误");
+        }else {
+            try {
+                List<Data> dataList = (List<Data>) JSON.parseArray(dataVal, Data.class);
+                List<Record> records= toRecords(dataList);
+                resContent.setCode(101);
+                resContent.setMessage("获取成功");
+                resContent.setData(records);
             } catch (JSONException jsone) {
                 jsone.printStackTrace();
                 resContent.setCode(104);
