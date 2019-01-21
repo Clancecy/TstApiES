@@ -2,6 +2,7 @@ package com.testyle.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
+import com.testyle.common.ExcelUtils;
 import com.testyle.common.ResContent;
 import com.testyle.common.Utils;
 import com.testyle.model.*;
@@ -64,7 +65,7 @@ public class DataController {
 
                 //写入出厂值
                 List<Data> dataList = (List<Data>) JSON.parseArray(defaultVal, Data.class);
-                if(dataList.size()!=0) {
+                if(dataList.size()!=0&&readDefaultNum(fname)==1) {
                     List<Record> defaultRecords = toRecords(dataList);
                     utils.writeToItemExcel(workbook, defaultRecords, 4);
                 }
@@ -170,7 +171,21 @@ public class DataController {
         response.getWriter().write(JSON.toJSONString(resContent));
         response.getWriter().close();
     }
-
+    private int readDefaultNum(String testUrl) {
+        int num = 0;
+        ExcelUtils excelUtils = new ExcelUtils();
+        try {
+            FileInputStream fis = new FileInputStream(testUrl);
+            Workbook workbook = WorkbookFactory.create(fis);
+            Row row = workbook.getSheetAt(2).getRow(1);
+            Cell cell = row.getCell(1);
+            String val = excelUtils.getCellValue(workbook, cell).toString();
+            num = (int) Double.parseDouble(val);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return num;
+    }
     private List<Record> toRecords(List<Data> dataList) {
         long proID=dataList.get(0).getProID();
         return getDbRecords(dataList, proID);

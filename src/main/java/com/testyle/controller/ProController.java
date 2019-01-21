@@ -73,8 +73,6 @@ public class ProController {
         }
         String url = root + file.getOriginalFilename();
         try {
-
-
             long devTypeID = Long.parseLong(request.getParameter("devTypeID"));
             String temp = file.getOriginalFilename();
             String fileName = temp.split("\\.")[0];
@@ -149,8 +147,6 @@ public class ProController {
         response.setCharacterEncoding(charact);
         ResContent resContent = new ResContent();
         try {
-
-
             long proID = Long.parseLong(request.getParameter("proID"));
             long testID = Long.parseLong(request.getParameter("testID"));
             long taskID = Long.parseLong(request.getParameter("taskID"));
@@ -169,7 +165,7 @@ public class ProController {
                     resContent.setMessage("没有该项目");
                 } else {
                     project = projectList.get(0);
-                    String url = project.getUrl();
+                    String url = "E:"+project.getUrl();
                     int num = readRecordNum(url);
                     String code = "test" + testID + "task" + taskID + "pro" + proID;
                     Record record = new Record();
@@ -584,11 +580,9 @@ public class ProController {
         project.setProID(proID);
         project = proService.select(project).get(0);
         String fname=project.getProName();
-        String path = project.getUrl();
+        String path = "E:"+project.getUrl();
         String pdfUrl = toPDF(path, fname);
         fname = URLEncoder.encode(project.getProName()+".pdf", "UTF-8");
-//        File file = new File("E:\\file\\直流电阻模板.xlsx");
-//        String fname = "直流电阻模板.xlsx";
         File file = new File(pdfUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData("attachment", fname);
@@ -601,9 +595,9 @@ public class ProController {
         try {
             String path = request.getParameter("path");
             String fname = request.getParameter("fname");
-            fname = URLEncoder.encode(fname, charact);
             String pdfUrl = toPDF(path, fname);
             File file = new File(pdfUrl);
+            fname = URLEncoder.encode(fname+".pdf", charact);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", fname);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
