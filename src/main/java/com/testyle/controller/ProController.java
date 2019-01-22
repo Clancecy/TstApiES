@@ -165,7 +165,7 @@ public class ProController {
                     resContent.setMessage("没有该项目");
                 } else {
                     project = projectList.get(0);
-                    String url = "E:"+project.getUrl();
+                    String url = project.getUrl();
                     int num = readRecordNum(url);
                     String code = "test" + testID + "task" + taskID + "pro" + proID;
                     Record record = new Record();
@@ -580,7 +580,7 @@ public class ProController {
         project.setProID(proID);
         project = proService.select(project).get(0);
         String fname=project.getProName();
-        String path = "E:"+project.getUrl();
+        String path = project.getUrl();
         String pdfUrl = toPDF(path, fname);
         fname = URLEncoder.encode(project.getProName()+".pdf", "UTF-8");
         File file = new File(pdfUrl);

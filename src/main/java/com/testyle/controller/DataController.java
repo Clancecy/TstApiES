@@ -39,7 +39,6 @@ public class DataController {
 
     String charact = "UTF-8";
 
-    String testRoot="E:/testFile/";
 
     @RequestMapping("/add")
     public void addData(Data data, HttpServletRequest request, HttpServletResponse response) throws IOException {

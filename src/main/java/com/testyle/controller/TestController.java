@@ -25,7 +25,6 @@ public class TestController {
     @Resource
     private IProService proService;
     String charact = "UTF-8";
-    String testRoot="E:/file2";
 
     @RequestMapping("/add")
     public void addTest(Test test, HttpServletResponse response) throws IOException {

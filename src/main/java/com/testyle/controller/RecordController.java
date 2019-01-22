@@ -16,7 +16,7 @@ public class RecordController {
     private IItemService itemService;
 
     String charact = "UTF-8";
-    String root="E:/file/";
+
 
     private void addRecord(Sheet sheet, long proID, long pRecID){
 

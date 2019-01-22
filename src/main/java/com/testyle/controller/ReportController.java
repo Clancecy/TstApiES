@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/report")
 public class ReportController {
-    String reportPDF = "E:/reportPDF/";
+    String reportPDF = "/reportPDF/";
 
     @RequestMapping("/create")
     public void createReport(HttpServletRequest request, HttpServletResponse response) throws IOException {
